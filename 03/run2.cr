@@ -1,25 +1,24 @@
-def all_pixel(index, left, top, width, height)
-  Range.new(left, left + width, true).map do |x|
-    Range.new(top, top + height, true).map do |y|
-      {x, y}
-    end
-  end.flatten
-end
-
 pixel_list = File.read_lines("input").map do |line|
-  if md = /#(\d+) @ (\d+),(\d+): (\d+)x(\d+)/.match(line)
-    {md[1].to_i, md[2].to_i, md[3].to_i, md[4].to_i, md[5].to_i}
+  index, left, top, width, height = line.scan(/\d+/).map(&.[0].to_i)
+  (left...left + width).map do |x|
+    (top...top + height).map do |y|
+      {index, x, y}
+    end
   end
 end
-  .compact
+  .flatten
 
 hash = pixel_list
-  .flat_map { |v| all_pixel(*v) }
-  .group_by { |e| e }
-  .map { |k, v| {k, v.size} }
+  .map { |index, x, y| {x, y} }
+  .group_by(&.itself)
+  .map { |point, list| {point, list.size} }
   .to_h
 
-puts pixel_list
-  .map { |v| {v[0], all_pixel(*v)} }
-  .map { |a| {a[0], a[1].all? { |p| hash[p] == 1 }} }
-  .select { |k, v| v }
+result = pixel_list
+  .group_by(&.[0])
+  .map { |index, index_points| {index, index_points.map { |_, x, y| {x, y} }} }
+  .select { |index, points| points.all? { |p| hash[p] == 1 } }
+  .map { |index, _| index }
+  .first
+
+puts result

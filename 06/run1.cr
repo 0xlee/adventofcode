@@ -20,10 +20,10 @@ def distance(x1, y1, x2, y2)
 end
 
 x1, y1, x2, y2 = boundary(coordinates)
-result =
+result_map =
   (x1..x2).flat_map do |x|
     (y1..y2).map do |y|
-      coordinates
+      data = coordinates
         .map { |index, _x, _y| {index, distance(_x, _y, x, y)} }
         .reduce({-1, Int32::MAX, false}) do |acc, inc|
           if inc[1] < acc[1]
@@ -34,7 +34,21 @@ result =
             acc
           end
         end
+      { {x, y}, data }
     end
   end
 
-puts result
+invalid_index_list = result_map
+  .select { |p, data| data[2] == false && (p[0] == x1 || p[0] == x2 || p[1] == y1 || p[1] == y2) }
+  .map { |_, data| {data[0], true} }
+  .to_h
+
+puts invalid_index_list
+
+puts result_map
+  .map { |_, data| data }
+  .select { |data| !data[2] }
+  .group_by { |data| data[0] }
+  .map { |index, datas| {index, datas.size} }
+  .select { |index, data| !invalid_index_list.fetch(index, false) }
+  .reduce { |acc, incr| acc[1] > incr[1] ? acc : incr }[1]

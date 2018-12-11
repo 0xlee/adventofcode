@@ -14,7 +14,7 @@ iteration = -1
 
 while result.size < letter_size
   iteration += 1
-  workers = workers.map { |c, i| { c, i-1 } } # decrement all
+  workers = workers.map { |c, i| {c, i - 1} } # decrement all
   workers
     .select { |c, i| i == 0 }
     .map { |obj| workers.delete(obj) }
@@ -24,7 +24,7 @@ while result.size < letter_size
     visited, non_visited = rules.partition { |k, _| result.includes?(k) }
     next_candidates = all_letters - visited.map { |k, _| k } - non_visited.map { |_, v| v } - workers.map { |k, _| k }
     next_candidates.first(5 - workers.size).each do |next_element|
-      workers << { next_element, 61 + (next_element - 'A') }
+      workers << {next_element, 61 + (next_element - 'A')}
     end
   end
 

@@ -1,5 +1,4 @@
 class Marble
-
   property num
   property p
   property n
@@ -20,7 +19,7 @@ class Marble
     self.n = marble
   end
 
-  def delete()
+  def delete
     if self.num == 0
       raise Exception.new("Deleting Marble number 0")
     end
@@ -47,8 +46,8 @@ player = 1
 (1..7178700).each do |n|
   if n % 23 == 0
     c = c.p.p.p.p.p.p.p
-    scores[player-1] += n + c.num
-    c = c.delete()
+    scores[player - 1] += n + c.num
+    c = c.delete
   else
     c = c.n.insert(n)
   end

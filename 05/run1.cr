@@ -1,5 +1,7 @@
 input = File.read("input")
-pattern = Regex.new("abcdefghijklmnopqrstuvwxyz".chars.map { |a| "#{a}#{a.upcase}|#{a.upcase}#{a}" }.join("|"))
+pattern = Regex.new(('a'..'z').map { |a|
+  "#{a}#{a.upcase}|#{a.upcase}#{a}"
+}.join("|"))
 
 lastsize = input.size + 1
 while input.size != lastsize

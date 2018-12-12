@@ -12,23 +12,40 @@ grid = (1..300).map do |x|
 end
 
 def subgrid_sum(grid, left, top, right, bottom)
-  (left..right).map do |x|
-    (top..bottom).map do |y|
+  (left...right).map do |x|
+    (top...bottom).map do |y|
       grid[x - 1][y - 1]
     end
   end.flatten.sum
 end
 
-result = (1..300).map do |left|
-  inner_result =(1..300).map do |top|
-    (1..300).map do |size|
-      if left + size <= 300 && top + size <= 300
-        sum = subgrid_sum grid, left, top, left+size, top+size
-        { left, top, size, sum }
+def subgrid_vsum(vgrid, left, top, right)
+  (left...right).map do |x|
+    vgrid[x - 1][top - 1]
+  end.flatten.sum
+end
+
+def vert_grid(grid, size)
+  (1..300).map do |x|
+    (1..300 - size + 1).map do |y|
+      if y + size <= 301
+        (y...y + size).map { |yy| grid[x - 1][yy - 1] }
+      end
+    end.compact
+  end
+end
+
+result = (1..300).map do |size|
+  vgrid = vert_grid grid, size
+  inner_result = (1..300).map do |left|
+    (1..300).map do |top|
+      if left + size <= 301 && top + size <= 301
+        sum = subgrid_vsum vgrid, left, top, left + size
+        {left, top, size, sum}
       end
     end.flatten.compact
   end.flatten.max_by { |_, _, _, sum| sum }
-  puts "#{left} #{inner_result}"
+  puts "#{size} #{inner_result}"
   inner_result
 end.flatten.max_by { |_, _, _, sum| sum }
 

@@ -1,71 +1,65 @@
 grid = File.read_lines("input").map { |line| line.chars }
 
-#grid = grid.map_with_index do |line, y|
-#  line.map_with_index do |field, x|
-#    { x: x, y: y, field: field, count: 0, moved: false }
-#  end
-#end
-
 moving_parts = grid.map_with_index do |line, y|
   line
-    .map_with_index { |field, x| {x, y, field, 0} }
+    .map_with_index { |field, x| {y, x, field, 0} }
     .select { |_, _, field| field == '>' || field == '<' || field == 'v' || field == '^' }
 end.flatten
 
 def move(grid : Array(Array(Char)), moving_parts : Array(Tuple(Int32, Int32, Char, Int32)))
-  moving_parts.map do |x, y, field, count|
+  moving_parts.map do |y, x, field, count|
     case field
     when '>'
       case grid[y][x + 1]
       when ' '
         raise "ERROR"
       when '\\'
-        {x + 1, y, 'v', count}
+        {y, x + 1, 'v', count}
       when '/'
-        {x + 1, y, '^', count}
+        {y, x + 1, '^', count}
       when '+'
-        {x + 1, y, dir('>', count), (count+1)%3}
+        {y, x + 1, dir('>', count), (count + 1) % 3}
       else
-        {x + 1, y, '>', count}
+        {y, x + 1, '>', count}
       end
     when '<'
       case grid[y][x - 1]
       when ' '
         raise "ERROR"
       when '\\'
-        {x - 1, y, '^', count}
+        {y, x - 1, '^', count}
       when '/'
-        {x - 1, y, 'v', count}
+        {y, x - 1, 'v', count}
       when '+'
-        {x - 1, y, dir('<', count), (count+1)%3}
+        {y, x - 1, dir('<', count), (count + 1) % 3}
       else
-        {x - 1, y, '<', count}
+        {y, x - 1, '<', count}
       end
     when 'v'
       case grid[y + 1][x]
       when ' '
         raise "ERROR"
       when '\\'
-        {x, y + 1, '>', count}
+        {y + 1, x, '>', count}
       when '/'
-        {x, y + 1, '<', count}
+        {y + 1, x, '<', count}
       when '+'
-        {x, y+1, dir('v', count), (count+1)%3}
+        {y + 1, x, dir('v', count), (count + 1) % 3}
       else
-        {x, y + 1, 'v', count}
+        {y + 1, x, 'v', count}
       end
     when '^'
       case grid[y - 1][x]
       when ' '
         raise "ERROR"
       when '\\'
-        {x, y - 1, '<', count}
+        {y - 1, x, '<', count}
       when '/'
-        {x, y - 1, '>', count}
+        {y - 1, x, '>', count}
       when '+'
-        {x, y-1, dir('^', count), (count+1)%3}
+        {y - 1, x, dir('^', count), (count + 1) % 3}
       else
-        {x, y - 1, '^', count}
+        {y - 1, x, '^', count}
       end
     end
   end.compact
@@ -122,15 +116,20 @@ def dir(current_direction, num)
   end
 end
 
+puts moving_parts
+puts moving_parts.sort
+
 (1..100000000).each do |n|
+  moving_parts.sort!
   moved_parts = move(grid, moving_parts)
-  crossed_parts = (moving_parts + moved_parts).group_by { |x, y, _, _| {x, y} }.select { |pos, values| values.size > 1 }
-  if crossed_parts.size > 0
-    puts crossed_parts
-    puts moving_parts
-    puts moved_parts
-    break
+  moved_parts.each_with_index do |moved, idx|
+    yy, xx = moved[0], moved[1]
+    cross_not_moved = moving_parts[(idx...moving_parts.size - 1)].select { |y, x, _, _| x == xx && y == yy }
+    cross_moved = moved_parts[(0...idx)].select { |y, x, _, _| x == xx && y == yy }
+    if cross_not_moved.count &.itself > 0 || cross_moved.count &.itself > 0
+      puts "#{moved[1]},#{moved[0]}"
+      Process.exit(0)
+    end
   end
   moving_parts = moved_parts
-  puts "#{n} #{moving_parts.map { |_, _, v, c| "#{v}#{c}" }.join()}"
 end

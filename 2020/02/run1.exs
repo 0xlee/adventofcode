@@ -13,4 +13,4 @@ count =
   |> Enum.filter(fn x -> x end)
   |> length
 
-IO.puts count
+IO.puts(count)

@@ -1,10 +1,10 @@
 check = fn [a, b, chr, str] ->
-  aa = String.to_integer(a)-1
-  bb = String.to_integer(b)-1
+  aa = String.to_integer(a) - 1
+  bb = String.to_integer(b) - 1
   IO.puts("#{aa} #{bb} #{str} #{chr} #{String.at(str, aa) == chr}, #{String.at(str, bb) == chr}")
-  (String.at(str, aa) == chr) != (String.at(str, bb) == chr)
-  #len = Enum.filter(String.split(str, "", trim: true), fn s -> s == chr end) |> length
-  #len >= String.to_integer(min) and len <= String.to_integer(max)
+  String.at(str, aa) == chr != (String.at(str, bb) == chr)
+  # len = Enum.filter(String.split(str, "", trim: true), fn s -> s == chr end) |> length
+  # len >= String.to_integer(min) and len <= String.to_integer(max)
 end
 
 count =
@@ -17,4 +17,4 @@ count =
   |> Enum.filter(fn x -> x end)
   |> length
 
-IO.puts count
+IO.puts(count)

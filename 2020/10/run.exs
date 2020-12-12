@@ -1,19 +1,22 @@
 defmodule Day10 do
   def run2(input) do
-    run2(Enum.sort(input), 1, %{0=>1, Enum.min(input) => 1})
+    run2(Enum.sort(input), 1, %{0 => 1, Enum.min(input) => 1})
   end
 
   def run2(input, index, memo) do
     if index == Enum.count(input) do
-      memo[Enum.at(input, index-1)]
+      memo[Enum.at(input, index - 1)]
     else
       n = Enum.at(input, index)
-      s = for i <- 1..3, n-i >= 0 do
-        memo[n-i]
-      end
-      |> Enum.filter(fn x -> x != nil end)
-      |> Enum.sum()
-      run2(input, index+1, Map.put(memo, n, s))
+
+      s =
+        for i <- 1..3, n - i >= 0 do
+          memo[n - i]
+        end
+        |> Enum.filter(fn x -> x != nil end)
+        |> Enum.sum()
+
+      run2(input, index + 1, Map.put(memo, n, s))
     end
   end
 end

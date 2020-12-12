@@ -26,17 +26,26 @@ result =
 
 # part 1
 result
-|> Enum.max
-|> IO.puts
+|> Enum.max()
+|> IO.puts()
 
 # part 2
 result
-|> Enum.sort
+|> Enum.sort()
 |> Enum.reduce(0, fn seatId, acc ->
-	case {seatId, acc} do
-		{l, 0} -> l
-		{l, n} when l == n+1 -> l
-		{l, n} when l == n+2 -> IO.puts(n+1); l # here printing missing
-		{l, n} -> IO.puts("ERROR: #{l}, #{n}")
-	end
+  case {seatId, acc} do
+    {l, 0} ->
+      l
+
+    {l, n} when l == n + 1 ->
+      l
+
+    # here printing missing
+    {l, n} when l == n + 2 ->
+      IO.puts(n + 1)
+      l
+
+    {l, n} ->
+      IO.puts("ERROR: #{l}, #{n}")
+  end
 end)
